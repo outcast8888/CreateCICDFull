@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_REGION = 'us-east-1' // Change to your AWS region
+        ECR_REPO_NAME = 'CreateCICDFull'
+        DOCKER_IMAGE_NAME = "service1"
+        LOCALSTACK_URL = 'http://localhost:4566' // Change to your Localstack URL
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Pull Docker Image') {
+            steps {
+                script {
+                    sh "docker pull <your-account-id>.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:latest"
+                }
+            }
+        }
+        stage('Deploy to Localstack') {
+            steps {
+                script {
+                    sh """
+                        docker run -d --name service1 -p 8080:8080 <your-account-id>.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:latest
+                        docker run -d --name service2 -p 8081:8081 <your-account-id>.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO_NAME}:latest
+                    """
+                }
+            }
+        }
+    }
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}

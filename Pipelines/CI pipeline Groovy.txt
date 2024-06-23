@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('mydockerclifull')
+        ECR_REPOSITORY_URI = 'arn:aws:ecs:us-east-1:211125604616:cluster/homeFullSys' 
+        DOCKER_IMAGE_NAME = 'service1'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/outcast8888/CreateCICDFull.git' // Replace with your repository URL
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${DOCKER_IMAGE_NAME}:${env.BUILD_ID}")
+                }
+            }
+        }
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKERHUB_CREDENTIALS) {
+                        docker.image("${DOCKER_IMAGE_NAME}:${env.BUILD_ID}").push()
+                    }
+                }
+            }
+        }
+    }
+}
