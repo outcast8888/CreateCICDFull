@@ -1,6 +1,6 @@
 provider "aws" {
-  profile = "new-terraform-profile"
-  region = var.region
+  region = var.region # region  = "us-east-1"
+  profile = var.user # profile = "cli-user-full"  # Ensure this matches your AWS CLI profile # profile = "new-terraform-profile"
 }
 
 module "cluster" {
@@ -33,17 +33,17 @@ module "elb" {
 }
 
 
-module "TestS3" {
-  source  = "./modules/TestS3"
-  bucket_name = var.bucket_name
-}
-
-#module "s3" {
-#  source  = "./modules/s3"
+#module "TestS3" {
+#  source  = "./modules/TestS3"
 #  bucket_name = var.bucket_name
 #}
 
-#module "sqs" {
-#  source = "./modules/sqs"
-#  queue_name = var.queue_name
-#}
+module "s3" {
+  source  = "./modules/s3"
+  bucket_name = var.bucket_name
+}
+
+module "sqs" {
+  source = "./modules/sqs"
+  queue_name = var.queue_name
+}
