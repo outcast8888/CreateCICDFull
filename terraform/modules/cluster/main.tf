@@ -1,5 +1,6 @@
 provider "aws" {
   region = var.region
+  profile = var.user
 }
 
 data "aws_iam_role" "existing_eks_role" {
