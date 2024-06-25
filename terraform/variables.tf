@@ -1,3 +1,8 @@
+variable "user" {
+  description = "The AWS user that deploy "
+  default     = "cli-user-full"
+}
+
 variable "region" {
   description = "The AWS region to deploy to"
   default     = "us-east-1"
